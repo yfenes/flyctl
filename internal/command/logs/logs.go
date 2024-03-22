@@ -42,6 +42,7 @@ Use --no-tail to only fetch the logs in the buffer.
 		command.RequireAppName,
 	)
 
+	cmd.AddCommand(NewSearch())
 	cmd.Args = cobra.NoArgs
 
 	flag.Add(cmd,

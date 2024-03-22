@@ -6,6 +6,8 @@ import (
 
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
+	"github.com/superfly/fly-go"
+	"github.com/superfly/flyctl/gql"
 	"github.com/superfly/flyctl/internal/appconfig"
 	"github.com/superfly/flyctl/internal/command"
 	"github.com/superfly/flyctl/internal/flag"
@@ -49,8 +51,13 @@ func newDashboardMetrics() *cobra.Command {
 }
 
 func runDashboard(ctx context.Context) error {
-	appName := appconfig.NameFromContext(ctx)
-	return runDashboardOpen(ctx, "https://fly.io/apps/"+appName)
+	client := fly.ClientFromContext(ctx).GenqClient
+	resp, err := gql.GetApp(ctx, client, appconfig.NameFromContext(ctx))
+
+	if err != nil {
+		return err
+	}
+	return runDashboardOpen(ctx, fmt.Sprintf("https://fly-metrics.net/d/fly-logs/fly-logs?orgId=%s&var-app=%s", resp.App.Organization.Id, resp.App.Name))
 }
 
 func runDashboardMetrics(ctx context.Context) error {
