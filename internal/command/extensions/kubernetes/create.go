@@ -86,6 +86,6 @@ func runK8sCreate(ctx context.Context) (err error) {
 		return fmt.Errorf("failed to write kubeconfig to file %s, error: %w", outFilename, err)
 	}
 
-	fmt.Fprintf(io.Out, "Wrote kubeconfig to file %s. Use it to connect to your cluster", outFilename)
+	fmt.Fprintf(io.Out, "Wrote kubeconfig to file %s. Use it to connect to your cluster\n", outFilename)
 	return
 }
