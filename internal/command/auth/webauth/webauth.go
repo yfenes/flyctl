@@ -1,14 +1,14 @@
 package webauth
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
-	"time"
-	"bytes"
-	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/azazeal/pause"
 	"github.com/briandowns/spinner"
@@ -102,13 +102,29 @@ func StartCLISession(sessionName string, args map[string]interface{}) (fly.CLISe
 	postData, _ := json.Marshal(args)
 
 	url := fmt.Sprintf("%s/api/v1/cli_sessions", "http://localhost:4000")
+	// url := fmt.Sprintf("%s/api/v1/cli_sessions", "https://api.fly.io")
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(postData))
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(postData))
+	fmt.Printf("%+v\n", bytes.NewBuffer(postData))
+	fmt.Printf("%+v\n", err)
+	if err != nil {
+		return result, err
+	}
+	req.Header.Add("content-type", "application/json")
+	req.Header.Add("x-staging", "1")
+	resp, err := http.DefaultClient.Do(req)
+	fmt.Printf("%+v\n", err)
+	fmt.Printf("%+v\n", resp)
+	// resp, err := http.Post(url, "application/json", bytes.NewBuffer(postData))
 	if err != nil {
 		return result, err
 	}
 
 	if resp.StatusCode != 201 {
+		fmt.Printf("%+v\n", req.Body)
+		errorRes := make(map[string]interface{})
+		json.NewDecoder(resp.Body).Decode(&errorRes)
+		fmt.Printf("%+v\n", errorRes)
 		return result, fly.ErrUnknown
 	}
 
@@ -133,12 +149,16 @@ func GetCLISessionState(ctx context.Context, id string) (fly.CLISession, error) 
 	var value fly.CLISession
 
 	url := fmt.Sprintf("%s/api/v1/cli_sessions/%s", "http://localhost:4000", id)
+	// url := fmt.Sprintf("%s/api/v1/cli_sessions/%s", "https://api.fly.io", id)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	fmt.Printf("%+v\n", err)
 	if err != nil {
 		return value, err
 	}
+	req.Header.Add("x-staging", "1")
 
 	res, err := http.DefaultClient.Do(req)
+	fmt.Printf("%+v\n", err)
 	if err != nil {
 		return value, err
 	}

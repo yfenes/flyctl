@@ -15,6 +15,7 @@ import (
 	"github.com/skratchdot/open-golang/open"
 	fly "github.com/superfly/fly-go"
 	"github.com/superfly/flyctl/helpers"
+	"github.com/superfly/flyctl/internal/command/auth/webauth"
 	"github.com/superfly/flyctl/internal/command/launch/plan"
 	"github.com/superfly/flyctl/internal/logger"
 	state2 "github.com/superfly/flyctl/internal/state"
@@ -27,7 +28,7 @@ func (state *launchState) EditInWebUi(ctx context.Context) error {
 	ctx, span := tracing.GetTracer().Start(ctx, "state.edit_in_web_ui")
 	defer span.End()
 
-	session, err := fly.StartCLISession(fmt.Sprintf("%s: %s", state2.Hostname(ctx), state.Plan.AppName), map[string]any{
+	session, err := webauth.StartCLISession(fmt.Sprintf("%s: %s", state2.Hostname(ctx), state.Plan.AppName), map[string]any{
 		"target":   "launch",
 		"metadata": state.Plan,
 	})
@@ -136,7 +137,7 @@ func waitForCLISession(parent context.Context, logger *logger.Logger, w io.Write
 	s.Start()
 
 	for ctx.Err() == nil {
-		if session, err = fly.GetCLISessionState(ctx, id); err != nil {
+		if session, err = webauth.GetCLISessionState(ctx, id); err != nil {
 			logger.Debugf("failed retrieving token: %v", err)
 
 			pause.For(ctx, time.Second)
@@ -151,6 +152,8 @@ func waitForCLISession(parent context.Context, logger *logger.Logger, w io.Write
 
 		break
 	}
+
+	logger.Debugf("%+v\n", session)
 
 	return
 }
