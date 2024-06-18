@@ -12,11 +12,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-tags: true
-          fetch-depth: '0'
-
-      - name: Bump version
-        uses: anotherNick/github-tag-actions@1.67.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          DEFAULT_BUMP: 'minor'
+      - name: bump version
+        run: |
+          ./scripts/force_bump_version.sh
