@@ -436,7 +436,8 @@ func solveOptFromImageOptions(opts ImageOptions, dockerfilePath string, buildArg
 		"target":   opts.Target,
 		// Fly.io only supports linux/amd64, but local Docker Engine could be running on ARM,
 		// including Apple Silicon.
-		"platform": "linux/amd64",
+		"platform":    "linux/amd64",
+		"attest:sbom": "",
 	}
 	attrs["target"] = opts.Target
 	if opts.NoCache {
