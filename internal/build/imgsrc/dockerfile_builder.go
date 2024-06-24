@@ -467,7 +467,7 @@ func solveOptFromImageOptions(opts ImageOptions, dockerfilePath string, buildArg
 		// Docker Engine's image store. The others are exporting images to somewhere else.
 		// https://github.com/moby/moby/blob/v20.10.24/builder/builder-next/worker/worker.go#L221
 		Exports: []client.ExportEntry{
-			{Type: "moby", Attrs: map[string]string{"name": opts.Tag}},
+			{Type: client.ExporterImage, Attrs: map[string]string{"name": opts.Tag}},
 		},
 	}
 }
