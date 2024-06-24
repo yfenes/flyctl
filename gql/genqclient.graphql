@@ -38,6 +38,12 @@ query GetAddOn($name: String, $provider: String) {
 	}
 }
 
+query GetAddOnEnv($name: String, $provider: String) {
+	addOn(name: $name, provider: $provider) {
+		environment
+	}
+}
+
 mutation CreateAddOn($input: CreateAddOnInput!) {
 	createAddOn(input: $input) {
 		addOn {

@@ -217,6 +217,13 @@ func ProvisionExtension(ctx context.Context, params ExtensionParams) (extension 
 		if err != nil {
 			return
 		}
+
+		resp, err := gql.GetAddOnEnv(ctx, client, extension.Data.Name, params.Provider)
+		if err != nil {
+			return extension, err
+		}
+
+		extension.Data.Environment = resp.AddOn.Environment
 	}
 
 	// Display provisioning notification to user

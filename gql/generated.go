@@ -1635,6 +1635,24 @@ func (v *GetAddOnAddOnOrganization) GetSlug() string { return v.Slug }
 // GetPaidPlan returns GetAddOnAddOnOrganization.PaidPlan, and is useful for accessing the field via an interface.
 func (v *GetAddOnAddOnOrganization) GetPaidPlan() bool { return v.PaidPlan }
 
+// GetAddOnEnvAddOn includes the requested fields of the GraphQL type AddOn.
+type GetAddOnEnvAddOn struct {
+	// Environment variables for the add-on
+	Environment interface{} `json:"environment"`
+}
+
+// GetEnvironment returns GetAddOnEnvAddOn.Environment, and is useful for accessing the field via an interface.
+func (v *GetAddOnEnvAddOn) GetEnvironment() interface{} { return v.Environment }
+
+// GetAddOnEnvResponse is returned by GetAddOnEnv on success.
+type GetAddOnEnvResponse struct {
+	// Find an add-on by ID or name
+	AddOn GetAddOnEnvAddOn `json:"addOn"`
+}
+
+// GetAddOn returns GetAddOnEnvResponse.AddOn, and is useful for accessing the field via an interface.
+func (v *GetAddOnEnvResponse) GetAddOn() GetAddOnEnvAddOn { return v.AddOn }
+
 // GetAddOnProviderAddOnProvider includes the requested fields of the GraphQL type AddOnProvider.
 type GetAddOnProviderAddOnProvider struct {
 	ExtensionProviderData `json:"-"`
@@ -2980,6 +2998,18 @@ type __FlyctlConfigCurrentReleaseInput struct {
 // GetAppName returns __FlyctlConfigCurrentReleaseInput.AppName, and is useful for accessing the field via an interface.
 func (v *__FlyctlConfigCurrentReleaseInput) GetAppName() string { return v.AppName }
 
+// __GetAddOnEnvInput is used internally by genqlient
+type __GetAddOnEnvInput struct {
+	Name     string `json:"name"`
+	Provider string `json:"provider"`
+}
+
+// GetName returns __GetAddOnEnvInput.Name, and is useful for accessing the field via an interface.
+func (v *__GetAddOnEnvInput) GetName() string { return v.Name }
+
+// GetProvider returns __GetAddOnEnvInput.Provider, and is useful for accessing the field via an interface.
+func (v *__GetAddOnEnvInput) GetProvider() string { return v.Provider }
+
 // __GetAddOnInput is used internally by genqlient
 type __GetAddOnInput struct {
 	Name     string `json:"name"`
@@ -3648,6 +3678,43 @@ func GetAddOn(
 	var err_ error
 
 	var data_ GetAddOnResponse
+	resp_ := &graphql.Response{Data: &data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return &data_, err_
+}
+
+// The query or mutation executed by GetAddOnEnv.
+const GetAddOnEnv_Operation = `
+query GetAddOnEnv ($name: String, $provider: String) {
+	addOn(name: $name, provider: $provider) {
+		environment
+	}
+}
+`
+
+func GetAddOnEnv(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	name string,
+	provider string,
+) (*GetAddOnEnvResponse, error) {
+	req_ := &graphql.Request{
+		OpName: "GetAddOnEnv",
+		Query:  GetAddOnEnv_Operation,
+		Variables: &__GetAddOnEnvInput{
+			Name:     name,
+			Provider: provider,
+		},
+	}
+	var err_ error
+
+	var data_ GetAddOnEnvResponse
 	resp_ := &graphql.Response{Data: &data_}
 
 	err_ = client_.MakeRequest(
